@@ -1,12 +1,11 @@
-
-class Vector{
-
-}
-
-def print_hi(name: str):
-    print(f'Hi, {name}')
+from Vector import Vector
+from Square import Square
 
 
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    x = Square(Vector(1, 0))
+    print(x)
+    x.jump()
+    print(x)
+
 

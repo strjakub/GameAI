@@ -32,3 +32,11 @@ class Square:
         if self.map.pattern[y][x] == 1 or self.map.pattern[y][x + 1] == 1 and not flag:
             return True
         return False
+
+    def is_dead(self) -> int:
+        if self.map.pattern[self.position.y][self.position.x] != 0 or\
+                self.map.pattern[self.position.y + 9][self.position.x] != 0 or\
+                self.map.pattern[self.position.y][self.position.x + 9] != 0 or\
+                self.map.pattern[self.position.y + 9][self.position.x + 9] != 0:
+            return self.position.x
+        return -1

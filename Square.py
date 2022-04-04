@@ -3,29 +3,29 @@ from Map import Map
 
 
 class Square:
-    jumpPower = Vector(0, -5)
-    gravity = Vector(0, 1)
+    jumpPower: Vector = Vector(0, -5)
+    gravity: Vector = Vector(0, 1)
 
-    def __init__(self, vector: Vector, board: Map):
-        self.position = vector
-        self.velocity = Vector(1, 0)
+    def __init__(self, position: Vector, board: Map) -> None:
+        self.position = position
         self.map = board
+        self.velocity: Vector = Vector(1, 0)
 
-    def __str__(self):
-        return f"position: {self.position}\nvelocity: {self.velocity}\n{self.isStable()}"
+    def __str__(self) -> str:
+        return f"position: {self.position}\nvelocity: {self.velocity}\n{self.is_stable()}"
 
-    def jump(self):
-        if self.isStable():
+    def jump(self) -> None:
+        if self.is_stable():
             self.velocity.add(Square.jumpPower)
 
-    def move(self):
+    def move(self) -> None:
         self.position.add(self.velocity)
-        if not self.isStable():
+        if not self.is_stable():
             self.velocity.add(Square.gravity)
         else:
             self.velocity.y = 0
 
-    def isStable(self):
+    def is_stable(self) -> bool:
         y = (self.position.y + 1) // 10
         x = self.position.x // 10
         flag = self.position.x % 10

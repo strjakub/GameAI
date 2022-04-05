@@ -9,10 +9,10 @@ class Square:
     def __init__(self, position: Vector, board: Map) -> None:
         self.position = position
         self.map = board
-        self.velocity: Vector = Vector(1, 0)
+        self.velocity: Vector = Vector(3, 0)
 
     def __str__(self) -> str:
-        return f"position: {self.position}\nvelocity: {self.velocity}\n{self.is_stable()}"
+        return f"position: {self.position}\nvelocity: {self.velocity}\n{self.is_stable()}\n{self.is_dead()}"
 
     def jump(self) -> None:
         if self.is_stable():
@@ -34,9 +34,10 @@ class Square:
         return False
 
     def is_dead(self) -> int:
-        if self.map.pattern[self.position.y][self.position.x] != 0 or\
-                self.map.pattern[self.position.y + 9][self.position.x] != 0 or\
-                self.map.pattern[self.position.y][self.position.x + 9] != 0 or\
-                self.map.pattern[self.position.y + 9][self.position.x + 9] != 0:
+        grid = self.map.to_grid()
+        if grid[self.position.y][self.position.x] != 0 or\
+                self.position.y - 9 >= 0 and grid[self.position.y - 9][self.position.x] != 0 or\
+                self.position.x + 9 < len(grid[self.position.y]) and grid[self.position.y][self.position.x + 9] != 0 or\
+                self.position.y - 9 >= 0 and self.position.x + 9 < len(grid[self.position.y]) and grid[self.position.y - 9][self.position.x + 9] != 0:
             return self.position.x
         return -1

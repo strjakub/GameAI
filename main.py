@@ -4,12 +4,12 @@ from Map import Map
 
 
 if __name__ == '__main__':
-    mapa = Map()
-    for i in mapa.to_grid():
+    y = Map()
+    for i in y.to_grid():
         print(i)
-    # x = Square(Vector(11, 49), Map())
-    # for i in range(20):
-    #     x.jump()
-    #     x.move()
-    #     print(x)
-    #     print("------------------------")
+    x = Square(Vector(11, 49), y)
+    for i in range(20):
+        x.jump()
+        x.move()
+        print(x)
+        print("------------------------")

@@ -4,45 +4,63 @@ from typing import List
 class Map:
     def __init__(self) -> None:
         self.pattern: List[List[int]] = [
-            [0] * 10,
-            [0] * 10,
-            [0] * 10,
-            [0] * 10,
-            [0] * 10,
-            [2] * 10
+            [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 2, 2, 0, 0, 1, 1, 0, 0, 0],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1]
         ]
 
     def to_grid(self) -> List[List[int]]:
-        result = []
-        dictionary = {}
+        result = [[0 for _ in range(10 * len(self.pattern[0]))] for _ in range(10 * len(self.pattern))]
         for i in range(len(self.pattern)):
-            tab = []
             for j in range(len(self.pattern[i])):
+                if self.pattern[i][j] == 1:
+                    self.add_wall(result, j, i)
                 if self.pattern[i][j] == 2:
-                    dictionary[(i, j)] = 1
-                for _ in range(10):
-                    tab.append(self.pattern[i][j])
-            for _ in range(10):
-                result.append(tab.copy())
+                    self.add_spike(result, j, i)
 
-        for key in dictionary:
-            self.add_spike(result, key[1], key[0])
         return result
 
+
     def add_spike(self, tab: List[List[int]], x: int, y: int) -> None:
+        is_upside_down = False
+        if y == 0 or self.pattern[y - 1][x] == 1:
+            is_upside_down = True
+
         x *= 10
         y *= 10
         memory = 0
+        if is_upside_down:
+            memory = 11
+
         for i in range(10):
-            memory += 1
-            memory2 = memory
-            if memory % 2:
+            if not is_upside_down:
                 memory += 1
-            tmp = (10 - memory) // 2
+                memory2 = memory
+                if memory % 2:
+                    memory += 1
+                tmp = (10 - memory) // 2
+            else:
+                memory -= 1
+                memory2 = memory
+                if memory % 2:
+                    memory += 1
+                tmp = (10 - memory) // 2
+
             for o in range(tmp):
                 tab[y + i][x + o] = 0
             for o in range(memory):
                 tab[y + i][x + tmp + o] = 2
             for o in range(tmp):
                 tab[y + i][x + tmp + memory + o] = 0
+
             memory = memory2
+
+    def add_wall(self, tab: List[List[int]], x: int, y: int) -> None:
+        x *= 10
+        y *= 10
+        for i in range(10):
+            for j in range(10):
+                tab[y + i][x + j] = 1

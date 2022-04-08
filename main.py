@@ -1,16 +1,20 @@
 from Vector import Vector
 from Square import Square
-from Map import Map
+from Map import Map, graininess
+from math import floor
+import time
 import tkinter
 import keyboard
-import random
+
+zoom = 3
+width = 200
 
 if __name__ == '__main__':
     y = Map()
-    x = Square(Vector(5, 49), y)
+    x = Square(Vector(5, 7 * graininess - 1), y)
     top = tkinter.Tk()
     grid = y.to_grid()
-    canvas = tkinter.Canvas(top, bg="lightblue", height=len(grid) * 10, width=600)
+    canvas = tkinter.Canvas(top, bg="lightblue", height=len(grid) * zoom, width=width * zoom)
     canvas.pack()
     dash = 0
     while True:
@@ -18,28 +22,25 @@ if __name__ == '__main__':
             x.jump()
 
         x.move()
-        if x.position.x + 60 >= len(grid[0]):
-            break
+        if x.position.x + graininess + 5 >= len(grid[0]):
+            exit(0)
+        if not x.position.x + width >= len(grid[0]):
+            dash += floor(1 * graininess / 5)
 
         canvas.delete("all")
         for j in range(len(grid)):
-            for i in range(60):
+            for i in range(width):
                 if x.contain_square_body(i + dash, j):
-                    flag = random.randint(0, 2)
-                    if flag == 0:
-                        canvas.create_rectangle(i * 10, j * 10, (i + 1) * 10, (j + 1) * 10, fill="green", outline="green")
-                    if flag == 1:
-                        canvas.create_rectangle(i * 10, j * 10, (i + 1) * 10, (j + 1) * 10, fill="lightgreen", outline="lightgreen")
-                    if flag == 2:
-                        canvas.create_rectangle(i * 10, j * 10, (i + 1) * 10, (j + 1) * 10, fill="darkgreen", outline="darkgreen")
+                    canvas.create_rectangle(i * zoom, j * zoom, (i + 1) * zoom, (j + 1) * zoom, fill="green", outline="green")
                 elif grid[j][dash + i] == 2:
-                    canvas.create_rectangle(i * 10, j * 10, (i + 1) * 10, (j + 1) * 10, fill="red", outline="red")
+                    canvas.create_rectangle(i * zoom, j * zoom, (i + 1) * zoom, (j + 1) * zoom, fill="red", outline="red")
                 elif grid[j][dash + i] == 1:
-                    canvas.create_rectangle(i * 10, j * 10, (i + 1) * 10, (j + 1) * 10, fill="black", outline="black")
+                    canvas.create_rectangle(i * zoom, j * zoom, (i + 1) * zoom, (j + 1) * zoom, fill="black", outline="black")
         canvas.update()
 
         if x.is_dead() > 0:
             break
-        dash += 3
+
+
 
     top.mainloop()

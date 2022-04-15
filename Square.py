@@ -1,17 +1,22 @@
 from Vector import Vector
 from Map import Map, graininess
 from math import floor, ceil
+import pygame as pg
 
 
 class Square:
     jumpPower: Vector = Vector(0, ceil(-7 * graininess / 10))
     gravity: Vector = Vector(0, floor(1 * graininess / 10))
+    position: Vector
+    board: Map
 
-    def __init__(self, position: Vector, board: Map) -> None:
+    def __init__(self, position, board) -> None:
         self.position = position
         self.map = board
-        self.velocity: Vector = Vector(floor(1 * graininess / 5), 0)
+        self.velocity: Vector = Vector(floor(graininess / 5), 0)
         self.grid = self.map.to_grid()
+        self.block = pg.Rect(80, 6 * 80, 80, 80)
+        self.color = pg.Color(0, 255, 0)
 
     def __str__(self) -> str:
         return f"position: {self.position}\nvelocity: {self.velocity}\n{self.is_stable()}\n{self.is_dead()}"
@@ -20,7 +25,8 @@ class Square:
         if self.is_stable():
             self.velocity.add(Square.jumpPower)
 
-    def move(self) -> None:
+    # for tkinter visualization
+    def move2(self) -> None:
         if self.velocity.y > self.above().y:
             self.position.add(self.above())
         else:
@@ -64,3 +70,10 @@ class Square:
     # !!
     def contain_square_body(self, x: int, y: int) -> bool:
         return self.position.x <= x < self.position.x + graininess and self.position.y >= y > self.position.y - graininess
+
+    def draw(self, screen):
+        pg.draw.rect(screen, self.color, self.block)
+
+    def move(self, move_value):
+        ...
+        #self.block.left += move_value

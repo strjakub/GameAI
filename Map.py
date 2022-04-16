@@ -1,4 +1,5 @@
 from typing import List
+from random import randint
 
 
 class Map:
@@ -8,15 +9,16 @@ class Map:
         self.blocks_height = 8
         self.blocks_width = 15
         self.pattern: List[List[int]] = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0],
+            [1, 1, 1, 1, 1, 1, 1]
         ]
+        self.generate()
         self.grid = self.to_grid()
 
     def to_grid(self) -> List[List[int]]:
@@ -25,28 +27,18 @@ class Map:
             for j in range(len(self.pattern[i])):
                 if self.pattern[i][j] == 1:
                     self.add_wall(result, j, i)
-                if self.pattern[i][j] == 2:
+                if self.pattern[i][j] == 2 or self.pattern[i][j] == 3:
                     self.add_spike(result, j, i)
 
         return result
 
     def add_spike(self, tab: List[List[int]], x: int, y: int) -> None:
-        is_floating = False
         is_upside_down = False
-        if self.pattern[y - 1][x] == 0 and 0 < y < len(self.pattern) - 1 and self.pattern[y + 1][x] == 0:
-            is_floating = True
         if y == 0 or self.pattern[y - 1][x] == 1:
             is_upside_down = True
 
         x *= Map.graininess
         y *= Map.graininess
-
-        if is_floating:
-            for i in range(Map.graininess):
-                for j in range(Map.graininess):
-                    if i % 2 == j % 2:
-                        tab[y + i][x + j] = 2
-            return
 
         if not is_upside_down:
             for i in range(1, Map.graininess + 1):
@@ -67,9 +59,27 @@ class Map:
             for j in range(Map.graininess):
                 tab[y + i][x + j] = 1
 
+    def generate(self) -> None:
+        start_level = 1
+        for i in range(30):
+            filename = "pattern_" + str(start_level) + "_"
+            x = randint(1, 6)
+            filename = filename + str(x) + ".txt"
+            file = open(filename, "r")
+            tab = file.read().split('\n')
+            for j in range(len(tab)):
+                for k in tab[j]:
+                    self.pattern[j].append(int(k))
+            start_level = 0
+            for j in range(len(self.pattern) - 1, len(self.pattern) - 4, -1):
+                if self.pattern[j][len(self.pattern[j]) - 1] != 0:
+                    start_level = start_level + 1
+                else:
+                    break
 
-    # def generate(self) -> List[List[int]]:
-    #     tmp = [0] * 8
-
-    # def pattern_1_1(self, tab: List[List[int]]) -> None:
-    #     tab = [0] * 8
+        for i in range(10):
+            for j in range(len(self.pattern)):
+                if j < len(self.pattern) - 1:
+                    self.pattern[j].append(0)
+                else:
+                    self.pattern[j].append(1)

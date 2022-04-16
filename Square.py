@@ -16,7 +16,7 @@ class Square:
         self.velocity: Vector = Vector(12, 0)
         self.grid = self.map.to_grid()
         self.block = pg.Rect(Map.graininess // 2, (self.map.blocks_height - 2) * Map.graininess // 2, Map.graininess // 2, Map.graininess // 2)
-        self.color = pg.Color(0, 255, 0)
+        self.color = pg.Color(100, 200, 100)
         self.jump = False
         self.slide = False
         self.alive = True
@@ -28,7 +28,7 @@ class Square:
         if (self.position.x // Map.graininess) + 1 < len(self.map.pattern[0]) and self.is_stable():
             self.velocity.add(Square.jumpPower)
 
-    def move(self, move_value) -> None:
+    def move(self) -> None:
         if self.jump:
             self.make_jump()
             self.jump = False

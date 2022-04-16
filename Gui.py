@@ -1,6 +1,6 @@
 from typing import Tuple
 
-import keyboard
+import time
 
 from Map import Map
 from Square import Square
@@ -47,6 +47,8 @@ class Gui:
                     blocks.append(MapBlock(x, y, Gui.red, "spike", Gui.block_width, Gui.block_height))
                 elif self.map.pattern[y][x] == 1:
                     blocks.append(MapBlock(x, y, Gui.black, "block", Gui.block_width, Gui.block_height))
+                elif self.map.pattern[y][x] == 3:
+                    blocks.append(MapBlock(x, y, Gui.red, "reverse_spike", Gui.block_width, Gui.block_height))
 
         return blocks
 
@@ -67,7 +69,7 @@ class Gui:
             if self.slide and self.player.alive:
                 self.screen.fill(Gui.light_blue)
                 self.player.draw(self.screen)
-                self.player.move(6)
+                self.player.move()
                 blocks_len = len(self.blocks)
                 for block in self.blocks:
                     block.draw(self.screen)
@@ -81,6 +83,8 @@ class Gui:
                                 self.blocks.append(MapBlock(self.map.blocks_width, y, Gui.black, "block", Gui.block_width, Gui.block_height))
                             elif self.map.pattern[y][self.iter] == 2:
                                 self.blocks.append(MapBlock(self.map.blocks_width, y, Gui.red, "spike", Gui.block_width, Gui.block_height))
+                            elif self.map.pattern[y][self.iter] == 3:
+                                self.blocks.append(MapBlock(self.map.blocks_width, y, Gui.red, "reverse_spike", Gui.block_width, Gui.block_height))
 
                         self.iter += 1
                         if self.iter >= len(self.map.pattern[0]):
@@ -93,9 +97,13 @@ class Gui:
                 self.screen.fill(Gui.light_blue)
                 self.player.draw(self.screen)
                 if self.player.alive:
-                    self.player.move(6)
+                    self.player.move()
                 for block in self.blocks:
                     block.draw(self.screen)
+
+            else:
+                time.sleep(1)
+                return
 
             pg.display.update()
             clock.tick(self.FPS)

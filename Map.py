@@ -1,12 +1,12 @@
 from typing import List
 
-graininess = 10
-
 
 class Map:
+    graininess: int = 60
+
     def __init__(self) -> None:
         self.blocks_height = 8
-        self.blocks_width = 10
+        self.blocks_width = 15
         self.pattern: List[List[int]] = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -19,9 +19,8 @@ class Map:
         ]
         self.grid = self.to_grid()
 
-
     def to_grid(self) -> List[List[int]]:
-        result = [[0 for _ in range(graininess * len(self.pattern[0]))] for _ in range(graininess * len(self.pattern))]
+        result = [[0 for _ in range(Map.graininess * len(self.pattern[0]))] for _ in range(Map.graininess * len(self.pattern))]
         for i in range(len(self.pattern)):
             for j in range(len(self.pattern[i])):
                 if self.pattern[i][j] == 1:
@@ -31,7 +30,6 @@ class Map:
 
         return result
 
-
     def add_spike(self, tab: List[List[int]], x: int, y: int) -> None:
         is_floating = False
         is_upside_down = False
@@ -40,33 +38,33 @@ class Map:
         if y == 0 or self.pattern[y - 1][x] == 1:
             is_upside_down = True
 
-        x *= graininess
-        y *= graininess
+        x *= Map.graininess
+        y *= Map.graininess
 
         if is_floating:
-            for i in range(graininess):
-                for j in range(graininess):
+            for i in range(Map.graininess):
+                for j in range(Map.graininess):
                     if i % 2 == j % 2:
                         tab[y + i][x + j] = 2
             return
 
         if not is_upside_down:
-            for i in range(1, graininess + 1):
-                for j in range(1, graininess):
-                    if i / j <= 2 and i / (j - graininess) >= -2:
-                        tab[y + graininess - i][x + j] = 2
+            for i in range(1, Map.graininess + 1):
+                for j in range(1, Map.graininess):
+                    if i / j <= 2 and i / (j - Map.graininess) >= -2:
+                        tab[y + Map.graininess - i][x + j] = 2
         else:
-            for i in range(1, graininess + 1):
-                for j in range(1, graininess):
-                    if i / j <= 2 and i / (j - graininess) >= -2:
+            for i in range(1, Map.graininess + 1):
+                for j in range(1, Map.graininess):
+                    if i / j <= 2 and i / (j - Map.graininess) >= -2:
                         tab[y + i - 1][x + j] = 2
 
 
     def add_wall(self, tab: List[List[int]], x: int, y: int) -> None:
-        x *= graininess
-        y *= graininess
-        for i in range(graininess):
-            for j in range(graininess):
+        x *= Map.graininess
+        y *= Map.graininess
+        for i in range(Map.graininess):
+            for j in range(Map.graininess):
                 tab[y + i][x + j] = 1
 
 

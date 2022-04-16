@@ -2,7 +2,7 @@ from typing import List
 
 
 class Map:
-    graininess: int = 60
+    graininess: int = 120
 
     def __init__(self) -> None:
         self.blocks_height = 8

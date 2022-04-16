@@ -24,8 +24,8 @@ class Gui:
         pg.init()
         self.map = game_map
         self.player = game_player
-        self.width = 800
-        self.height = 640
+        self.width = 900
+        self.height = 480
         self.size = self.width, self.height
         self.FPS = 60
         self.screen = pg.display.set_mode(self.size)
@@ -36,6 +36,7 @@ class Gui:
         self.frame = 0
         self.slide = True
         self.jump = False
+
 
     def fill_map(self):
         blocks = []
@@ -52,7 +53,6 @@ class Gui:
     def run(self):
         pg.display.set_caption("Geometry Dash with AI")
         clock = pg.time.Clock()
-
         while True:
             self.frame += 1
             for event in pg.event.get():
@@ -69,9 +69,9 @@ class Gui:
                 blocks_len = len(self.blocks)
                 for block in self.blocks:
                     block.draw(self.screen)
-                    block.move(4)
+                    block.move(6)
 
-                if self.frame % (Gui.block_width // 4) == 0:
+                if self.frame % (Gui.block_width // 6) == 0:
                     self.blocks = [block for block in self.blocks if isinstance(block, Square) or not isinstance(block, Square) and block.in_borders()]
                     if blocks_len != len(self.blocks):
                         for y in range(self.map.blocks_height):
@@ -93,7 +93,8 @@ class Gui:
 if __name__ == "__main__":
     graininess = 20
     game_map1 = Map()
-    player = Square(Vector(20, 6 * 20), game_map1)
+    player = Square(Vector(Map.graininess, (game_map1.blocks_height - 1) * Map.graininess), game_map1)
+    print(player.position)
 
     gui = Gui(game_map1, player)
     gui.run()

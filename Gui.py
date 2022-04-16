@@ -35,7 +35,6 @@ class Gui:
         self.iter = self.map.blocks_width + 1
         self.frame = 0
         self.slide = True
-        self.jump = False
 
     def fill_map(self):
         blocks = []
@@ -60,8 +59,8 @@ class Gui:
                     sys.exit()
 
                 elif event.type == pg.KEYDOWN:
-                    self.jump = True
-                    print("JUMP!!!")
+                    if event.key == pg.K_SPACE:
+                        self.player.jump = True
 
             if self.slide and self.player.alive:
                 self.screen.fill(Gui.light_blue)
@@ -90,9 +89,8 @@ class Gui:
 
 
 if __name__ == "__main__":
-    graininess = 20
     game_map1 = Map()
-    player = Square(Vector(Map.graininess, (game_map1.blocks_height - 1) * Map.graininess), game_map1)
+    player = Square(Vector(Map.graininess, (game_map1.blocks_height - 1) * Map.graininess - 1), game_map1)
     print(player.position)
 
     gui = Gui(game_map1, player)

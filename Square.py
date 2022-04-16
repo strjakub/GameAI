@@ -15,20 +15,23 @@ class Square:
         self.map = board
         self.velocity: Vector = Vector(6, 0)
         self.grid = self.map.to_grid()
-        self.left = Map.graininess
-        self.top = (self.map.blocks_height - 2) * Map.graininess
-        self.block = pg.Rect(self.left, self.top, Map.graininess, Map.graininess)
+        self.block = pg.Rect(Map.graininess, (self.map.blocks_height - 2) * Map.graininess, Map.graininess, Map.graininess)
         self.color = pg.Color(0, 255, 0)
+        self.jump = False
         self.alive = True
 
     def __str__(self) -> str:
         return f"position: {self.position}\nvelocity: {self.velocity}\n{self.is_stable()}\n{self.is_dead()}"
 
-    def jump(self) -> None:
+    def make_jump(self) -> None:
         if self.is_stable():
             self.velocity.add(Square.jumpPower)
 
     def move(self, move_value) -> None:
+        if self.jump:
+            self.make_jump()
+            self.jump = False
+
         if self.velocity.y > self.above().y:
             self.position.add(self.above())
         else:
@@ -39,8 +42,8 @@ class Square:
         else:
             self.velocity.y = 0
 
-        self.left = self.position.x
-        self.top = self.position.y - Map.graininess
+        self.block.left = self.position.x
+        self.block.top = self.position.y - (Map.graininess - 1)
 
     def is_stable(self) -> bool:
         y = (self.position.y + 1) // Map.graininess
@@ -69,12 +72,7 @@ class Square:
             cnt = cnt + 1
         return Vector(self.velocity.x, cnt - 1)
 
-    # !!
-    def contain_square_body(self, x: int, y: int) -> bool:
-        return self.position.x <= x < self.position.x + Map.graininess and self.position.y >= y > self.position.y - Map.graininess
-
     def draw(self, screen):
         pg.draw.rect(screen, self.color, self.block)
         if self.is_dead() != -1:
             self.alive = False
-        print(self.alive)

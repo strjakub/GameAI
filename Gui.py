@@ -1,4 +1,7 @@
 from typing import Tuple
+
+import keyboard
+
 from Map import Map
 from Square import Square
 from Vector import Vector
@@ -45,7 +48,6 @@ class Gui:
                 elif self.map.pattern[y][x] == 1:
                     blocks.append(MapBlock(x, y, Gui.black, "block", Gui.block_width, Gui.block_height))
 
-        blocks.append(self.player)
         return blocks
 
     def run(self):
@@ -58,19 +60,21 @@ class Gui:
                     pg.quit()
                     sys.exit()
 
-                elif event.type == pg.KEYDOWN:
-                    if event.key == pg.K_SPACE:
-                        self.player.jump = True
+            keys = pg.key.get_pressed()
+            if keys[pg.K_SPACE]:
+                self.player.jump = True
 
             if self.slide and self.player.alive:
                 self.screen.fill(Gui.light_blue)
+                self.player.draw(self.screen)
+                self.player.move(6)
                 blocks_len = len(self.blocks)
                 for block in self.blocks:
                     block.draw(self.screen)
                     block.move(6)
 
                 if self.frame % (Gui.block_width // 6) == 0:
-                    self.blocks = [block for block in self.blocks if isinstance(block, Square) or not isinstance(block, Square) and block.in_borders()]
+                    self.blocks = [block for block in self.blocks if block.in_borders()]
                     if blocks_len != len(self.blocks):
                         for y in range(self.map.blocks_height):
                             if self.map.pattern[y][self.iter] == 1:
@@ -84,6 +88,15 @@ class Gui:
 
                     self.frame = 0
 
+            elif self.player.alive:
+                self.player.slide = True
+                self.screen.fill(Gui.light_blue)
+                self.player.draw(self.screen)
+                if self.player.alive:
+                    self.player.move(6)
+                for block in self.blocks:
+                    block.draw(self.screen)
+
             pg.display.update()
             clock.tick(self.FPS)
 
@@ -91,7 +104,6 @@ class Gui:
 if __name__ == "__main__":
     game_map1 = Map()
     player = Square(Vector(Map.graininess, (game_map1.blocks_height - 1) * Map.graininess - 1), game_map1)
-    print(player.position)
 
     gui = Gui(game_map1, player)
     gui.run()

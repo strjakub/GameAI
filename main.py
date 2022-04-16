@@ -20,7 +20,7 @@ if __name__ == '__main__':
         if keyboard.is_pressed('space'):
             x.jump()
 
-        x.move2()
+        x.move()
         if x.position.x + graininess + 5 >= len(grid[0]):
             exit(0)
         if not x.position.x + width >= len(grid[0]):

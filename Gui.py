@@ -37,7 +37,6 @@ class Gui:
         self.slide = True
         self.jump = False
 
-
     def fill_map(self):
         blocks = []
         for y in range(self.map.blocks_height):
@@ -64,7 +63,7 @@ class Gui:
                     self.jump = True
                     print("JUMP!!!")
 
-            if self.slide:
+            if self.slide and self.player.alive:
                 self.screen.fill(Gui.light_blue)
                 blocks_len = len(self.blocks)
                 for block in self.blocks:

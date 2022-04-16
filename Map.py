@@ -61,9 +61,16 @@ class Map:
 
     def generate(self) -> None:
         start_level = 1
-        for i in range(30):
+        length = 0
+        while length < 200:
             filename = "pattern_" + str(start_level) + "_"
-            x = randint(1, 6)
+            x = randint(1, 7)
+            if start_level == 1 and x == 7:
+                y = randint(1, 2)
+                if y == 1:
+                    filename = filename + 'a'
+                else:
+                    filename = filename + 'b'
             filename = filename + str(x) + ".txt"
             file = open(filename, "r")
             tab = file.read().split('\n')
@@ -76,6 +83,8 @@ class Map:
                     start_level = start_level + 1
                 else:
                     break
+            length = length + len(tab[0])
+            file.close()
 
         for i in range(10):
             for j in range(len(self.pattern)):

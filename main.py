@@ -2,7 +2,6 @@ from Vector import Vector
 from Square import Square
 from Map import Map, graininess
 from math import floor
-import time
 import tkinter
 import keyboard
 
@@ -21,7 +20,7 @@ if __name__ == '__main__':
         if keyboard.is_pressed('space'):
             x.jump()
 
-        x.move()
+        x.move2()
         if x.position.x + graininess + 5 >= len(grid[0]):
             exit(0)
         if not x.position.x + width >= len(grid[0]):
@@ -31,16 +30,17 @@ if __name__ == '__main__':
         for j in range(len(grid)):
             for i in range(width):
                 if x.contain_square_body(i + dash, j):
-                    canvas.create_rectangle(i * zoom, j * zoom, (i + 1) * zoom, (j + 1) * zoom, fill="green", outline="green")
+                    canvas.create_rectangle(i * zoom, j * zoom, (i + 1) * zoom, (j + 1) * zoom, fill="green",
+                                            outline="green")
                 elif grid[j][dash + i] == 2:
-                    canvas.create_rectangle(i * zoom, j * zoom, (i + 1) * zoom, (j + 1) * zoom, fill="red", outline="red")
+                    canvas.create_rectangle(i * zoom, j * zoom, (i + 1) * zoom, (j + 1) * zoom, fill="red",
+                                            outline="red")
                 elif grid[j][dash + i] == 1:
-                    canvas.create_rectangle(i * zoom, j * zoom, (i + 1) * zoom, (j + 1) * zoom, fill="black", outline="black")
+                    canvas.create_rectangle(i * zoom, j * zoom, (i + 1) * zoom, (j + 1) * zoom, fill="black",
+                                            outline="black")
         canvas.update()
 
         if x.is_dead() > 0:
             break
-
-
 
     top.mainloop()

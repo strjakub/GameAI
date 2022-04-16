@@ -1,6 +1,5 @@
 from Vector import Vector
 from Map import Map
-from math import floor, ceil
 import pygame as pg
 
 
@@ -9,6 +8,7 @@ class Square:
     gravity: Vector = Vector(0, 1)
     position: Vector
     board: Map
+    alive: bool
 
     def __init__(self, position, board) -> None:
         self.position = position
@@ -19,6 +19,7 @@ class Square:
         self.top = (self.map.blocks_height - 2) * Map.graininess
         self.block = pg.Rect(self.left, self.top, Map.graininess, Map.graininess)
         self.color = pg.Color(0, 255, 0)
+        self.alive = True
 
     def __str__(self) -> str:
         return f"position: {self.position}\nvelocity: {self.velocity}\n{self.is_stable()}\n{self.is_dead()}"
@@ -51,13 +52,12 @@ class Square:
 
     def is_dead(self) -> int:
         z = Map.graininess - 1
-        grid = self.map.to_grid()
         for i in range(Map.graininess):
-            if grid[self.position.y][self.position.x + i] != 0 or \
-                    self.position.y - z >= 0 and grid[self.position.y - z + i][self.position.x] != 0 or \
-                    self.position.x + z < len(grid[self.position.y]) and grid[self.position.y - i][self.position.x + z] != 0 or \
-                    self.position.y - z >= 0 and self.position.x + z < len(grid[self.position.y]) and \
-                    grid[self.position.y - z][self.position.x + z - i] != 0:
+            if self.grid[self.position.y][self.position.x + i] != 0 or \
+                    self.position.y - z >= 0 and self.grid[self.position.y - z + i][self.position.x] != 0 or \
+                    self.position.x + z < len(self.grid[self.position.y]) and self.grid[self.position.y - i][self.position.x + z] != 0 or \
+                    self.position.y - z >= 0 and self.position.x + z < len(self.grid[self.position.y]) and \
+                    self.grid[self.position.y - z][self.position.x + z - i] != 0:
                 return self.position.x
         return -1
 
@@ -75,3 +75,6 @@ class Square:
 
     def draw(self, screen):
         pg.draw.rect(screen, self.color, self.block)
+        if self.is_dead() != -1:
+            self.alive = False
+        print(self.alive)

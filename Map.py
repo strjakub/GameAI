@@ -5,7 +5,7 @@ from random import randint
 class Map:
     graininess: int = 120
 
-    def __init__(self) -> None:
+    def __init__(self, reach) -> None:
         self.blocks_height = 8
         self.blocks_width = 15
         self.pattern: List[List[int]] = [
@@ -18,7 +18,7 @@ class Map:
             [0, 0, 0, 0, 0, 0, 0],
             [1, 1, 1, 1, 1, 1, 1]
         ]
-        self.generate()
+        self.generate(reach)
         self.grid = self.to_grid()
 
     def to_grid(self) -> List[List[int]]:
@@ -59,10 +59,10 @@ class Map:
             for j in range(Map.graininess):
                 tab[y + i][x + j] = 1
 
-    def generate(self) -> None:
+    def generate(self, reach: int) -> None:
         start_level = 1
         length = 0
-        while length < 200:
+        while length < reach:
             filename = "pattern_" + str(start_level) + "_"
             x = randint(1, 7)
             if start_level == 1 and x == 7:

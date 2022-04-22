@@ -1,46 +1,103 @@
-from Vector import Vector
+from Button import Button
+from Map import Map
 from Square import Square
-from Map import Map, graininess
-from math import floor
-import tkinter
-import keyboard
+from Vector import Vector
+from Gui import Gui
+import pygame as pg
+import sys
 
-zoom = 3
-width = 200
 
 if __name__ == '__main__':
-    y = Map()
-    x = Square(Vector(5, 7 * graininess - 1), y)
-    top = tkinter.Tk()
-    grid = y.to_grid()
-    canvas = tkinter.Canvas(top, bg="lightblue", height=len(grid) * zoom, width=width * zoom)
-    canvas.pack()
-    dash = 0
+    first_stage_done = False
+    second_stage_done = False
+    third_stage_done = False
+    ML = False
+    is_hover = False
+    length = 0
+
+    pg.init()
+    width = 900
+    height = 540
+    size = width, height
+    screen = pg.display.set_mode(size)
+    pg.display.set_caption("Geometry Dash with AI")
+    clock = pg.time.Clock()
+    gui = None
+
+    button_font = pg.font.Font(None, 30)
+    rect = pg.Rect((0, 0), (width, height))
+    text_surf = pg.font.Font(None, 60).render("Loading...", True, (0, 0, 0))
+    text_rect = text_surf.get_rect(center=rect.center)
+
+    button1 = Button(screen, "Machine Learning", (75, 70), button_font, 300, 80)
+    button2 = Button(screen, "Casual Gameplay", (525, 70), button_font, 300, 80)
+    button3 = Button(screen, "With Hover", (75, 185), button_font, 300, 80)
+    button4 = Button(screen, "Non Hover", (525, 185), button_font, 300, 80)
+    button5 = Button(screen, "Tiny", (75, 335), button_font, 150, 80)
+    button6 = Button(screen, "Short", (275, 335), button_font, 150, 80)
+    button7 = Button(screen, "Long", (475, 335), button_font, 150, 80)
+    button8 = Button(screen, "Super Long", (675, 335), button_font, 150, 80)
+
     while True:
-        if keyboard.is_pressed('space'):
-            x.jump()
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                sys.exit()
 
-        x.move()
-        if x.position.x + graininess + 5 >= len(grid[0]):
-            exit(0)
-        if not x.position.x + width >= len(grid[0]):
-            dash += floor(1 * graininess / 5)
-
-        canvas.delete("all")
-        for j in range(len(grid)):
-            for i in range(width):
-                if x.contain_square_body(i + dash, j):
-                    canvas.create_rectangle(i * zoom, j * zoom, (i + 1) * zoom, (j + 1) * zoom, fill="green",
-                                            outline="green")
-                elif grid[j][dash + i] == 2:
-                    canvas.create_rectangle(i * zoom, j * zoom, (i + 1) * zoom, (j + 1) * zoom, fill="red",
-                                            outline="red")
-                elif grid[j][dash + i] == 1:
-                    canvas.create_rectangle(i * zoom, j * zoom, (i + 1) * zoom, (j + 1) * zoom, fill="black",
-                                            outline="black")
-        canvas.update()
-
-        if x.is_dead() > 0:
+        screen.fill((200, 200, 200))
+        if not first_stage_done:
+            button1.draw()
+            button2.draw()
+        elif not second_stage_done:
+            button3.draw()
+            button4.draw()
+        elif not third_stage_done:
+            button5.draw()
+            button6.draw()
+            button7.draw()
+            button8.draw()
+        else:
+            screen.blit(text_surf, text_rect)
+            pg.display.update()
+            game_map1 = Map(length)
+            player = Square(Vector(Map.graininess, (game_map1.blocks_height - 1) * Map.graininess - 1), game_map1)
+            gui = Gui(game_map1, player, screen, width, height, is_hover)
             break
 
-    top.mainloop()
+        if button1.check_click():
+            first_stage_done = True
+            second_stage_done = True
+            third_stage_done = True
+            ML = True
+        if button2.check_click():
+            first_stage_done = True
+
+        if button3.check_click():
+            is_hover = True
+            second_stage_done = True
+        if button4.check_click():
+            second_stage_done = True
+
+        if button5.check_click():
+            third_stage_done = True
+            length = 100
+        if button6.check_click():
+            third_stage_done = True
+            length = 200
+        if button7.check_click():
+            third_stage_done = True
+            length = 300
+        if button8.check_click():
+            third_stage_done = True
+            length = 400
+
+        pg.display.update()
+        clock.tick(60)
+
+    if third_stage_done and not ML:
+        gui.run()
+    elif third_stage_done and ML:
+        print("ML")
+        exit(0)
+    else:
+        pass

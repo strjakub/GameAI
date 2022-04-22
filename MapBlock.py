@@ -6,6 +6,7 @@ import pygame as pg
 class MapBlock:
 
     def __init__(self, x, y, color, block_type, block_width, block_height):
+        y = y + 1
         self.x = x
         self.y = y
         self.block_width = block_width

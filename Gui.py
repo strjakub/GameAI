@@ -1,11 +1,11 @@
 from typing import Tuple
 
-import time
+import keyboard
 
 from Map import Map
+from MapBlock import MapBlock
 from Square import Square
 from Vector import Vector
-from MapBlock import MapBlock
 
 import pygame as pg
 import sys
@@ -23,17 +23,17 @@ class Gui:
     black = pg.Color(0, 0, 0)
     red = pg.Color(255, 0, 0)
 
-    def __init__(self, game_map, game_player):
+    def __init__(self, game_map, game_player, screen, width, height, is_hover):
         pg.init()
+        self.is_hover = is_hover
         self.map = game_map
         self.player = game_player
-        self.width = 900
-        self.height = 480
-        self.size = self.width, self.height
         self.FPS = 60
-        self.screen = pg.display.set_mode(self.size)
+        self.screen = screen
+        self.width = width
+        self.height = height
         Gui.block_width = self.width // self.map.blocks_width
-        Gui.block_height = self.height // self.map.blocks_height
+        Gui.block_height = self.height // (self.map.blocks_height + 1)
         self.blocks = self.fill_map()
         self.iter = self.map.blocks_width + 1
         self.frame = 0
@@ -53,7 +53,6 @@ class Gui:
         return blocks
 
     def run(self):
-        pg.display.set_caption("Geometry Dash with AI")
         clock = pg.time.Clock()
         while True:
             self.frame += 1
@@ -65,6 +64,25 @@ class Gui:
             keys = pg.key.get_pressed()
             if keys[pg.K_SPACE]:
                 self.player.jump = True
+            if keys[pg.K_q] and self.is_hover:
+                self.player.hover_pressed = True
+            else:
+                self.player.hover_pressed = False
+
+            if self.player.position.x // Map.graininess >= len(self.map.pattern[0]):
+                rect1 = pg.Rect((390, 180), (120, 80))
+                rect2 = pg.Rect((390, 280), (120, 80))
+                text_surf1 = pg.font.Font(None, 80).render("YOU WIN!", True, (0, 0, 0))
+                text_surf2 = pg.font.Font(None, 40).render("('Esc' to exit)", True, (0, 0, 0))
+                text_rect1 = text_surf1.get_rect(center=rect1.center)
+                text_rect2 = text_surf2.get_rect(center=rect2.center)
+                self.screen.blit(text_surf1, text_rect1)
+                self.screen.blit(text_surf2, text_rect2)
+                pg.display.update()
+                while True:
+                    if keyboard.is_pressed("esc"):
+                        break
+                return
 
             if self.slide and self.player.alive:
                 self.screen.fill(Gui.light_blue)
@@ -102,16 +120,36 @@ class Gui:
                     block.draw(self.screen)
 
             else:
-                time.sleep(1)
+                rect1 = pg.Rect((390, 180), (120, 80))
+                rect2 = pg.Rect((390, 280), (120, 80))
+                text_surf1 = pg.font.Font(None, 60).render("Press 'R' to restart", True, (255, 255, 255))
+                text_rect1 = text_surf1.get_rect(center=rect1.center)
+                text_surf2 = pg.font.Font(None, 60).render("Press 'Esc' to exit", True, (255, 255, 255))
+                text_rect2 = text_surf2.get_rect(center=rect2.center)
+                self.screen.blit(text_surf1, text_rect1)
+                self.screen.blit(text_surf2, text_rect2)
+                pg.display.update()
+
+                while True:
+                    if keyboard.is_pressed("r"):
+                        new_player = Square(Vector(Map.graininess, (self.map.blocks_height - 1) * Map.graininess - 1), self.map)
+                        new_gui = Gui(self.map, new_player, self.screen, self.width, self.height, self.is_hover)
+                        new_gui.run()
+                        break
+                    if keyboard.is_pressed("esc"):
+                        break
                 return
 
+            pg.draw.rect(self.screen, Gui.black, pg.Rect(0, 0, self.width, self.block_height))
+            if self.is_hover:
+                pg.draw.rect(self.screen, (255, 255, 255),
+                             pg.Rect(self.block_width // 2, self.block_height * 1 // 4,
+                                     self.block_width * 2, self.block_height // 2), 0)
+                pg.draw.rect(self.screen, (255, 0, 255),
+                             pg.Rect(self.block_width // 2, self.block_height * 1 // 4,
+                                     self.block_width * 2, self.block_height // 2), 1)
+                pg.draw.rect(self.screen, (255, 0, 255),
+                             pg.Rect(self.block_width // 2, self.block_height * 1 // 4,
+                                     self.block_width * 2 * self.player.hover // 80, self.block_height // 2), 0)
             pg.display.update()
             clock.tick(self.FPS)
-
-
-if __name__ == "__main__":
-    game_map1 = Map()
-    player = Square(Vector(Map.graininess, (game_map1.blocks_height - 1) * Map.graininess - 1), game_map1)
-
-    gui = Gui(game_map1, player)
-    gui.run()

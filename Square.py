@@ -16,10 +16,12 @@ class Square:
         self.velocity: Vector = Vector(12, 0)
         self.grid = self.map.to_grid()
         self.block = pg.Rect(Map.graininess // 2, (self.map.blocks_height - 2) * Map.graininess // 2, Map.graininess // 2, Map.graininess // 2)
-        self.color = pg.Color(100, 200, 100)
+        self.color = pg.Color(25, 100, 50)
         self.jump = False
+        self.hover_pressed = False
         self.slide = False
         self.alive = True
+        self.hover = 0
 
     def __str__(self) -> str:
         return f"position: {self.position}\nvelocity: {self.velocity}\n{self.is_stable()}\n{self.is_dead()}"
@@ -27,11 +29,15 @@ class Square:
     def make_jump(self) -> None:
         if (self.position.x // Map.graininess) + 1 < len(self.map.pattern[0]) and self.is_stable():
             self.velocity.add(Square.jumpPower)
+            self.hover = min(self.hover + 4, 80)
 
     def move(self) -> None:
         if self.jump:
             self.make_jump()
             self.jump = False
+        if self.hover_pressed and self.hover > 0 and self.velocity.y >= 0:
+            self.velocity.y = 0
+            self.hover -= 1
 
         if self.velocity.y > self.above().y:
             self.position.add(self.above())
@@ -45,7 +51,7 @@ class Square:
 
         if self.slide:
             self.block.left += 6
-        self.block.top = self.position.y // 2 - (Map.graininess // 2 - 1)
+        self.block.top = self.position.y // 2 - (Map.graininess // 2 - 1) + Map.graininess // 2
 
     def is_stable(self) -> bool:
         y = (self.position.y + 1) // Map.graininess

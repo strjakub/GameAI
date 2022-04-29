@@ -63,7 +63,7 @@ class Map:
         start_level = 1
         length = 0
         while length < reach:
-            filename = "pattern_" + str(start_level) + "_"
+            filename = "patterns/pattern_" + str(start_level) + "_"
             x = randint(1, 7)
             if start_level == 1 and x == 7:
                 y = randint(1, 2)

@@ -51,7 +51,6 @@ class Map:
                     if i / j <= 2 and i / (j - Map.graininess) >= -2:
                         tab[y + i - 1][x + j] = 2
 
-
     def add_wall(self, tab: List[List[int]], x: int, y: int) -> None:
         x *= Map.graininess
         y *= Map.graininess

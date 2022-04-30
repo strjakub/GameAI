@@ -3,6 +3,7 @@ from Map import Map
 from Square import Square
 from Vector import Vector
 from Gui import Gui
+from EvolutionaryAlgorithm import EvolutionaryAlgorithm
 import pygame as pg
 import sys
 
@@ -59,9 +60,10 @@ if __name__ == '__main__':
         else:
             screen.blit(text_surf, text_rect)
             pg.display.update()
-            game_map1 = Map(length)
-            player = Square(Vector(Map.graininess, (game_map1.blocks_height - 1) * Map.graininess - 1), game_map1)
-            gui = Gui(game_map1, player, screen, width, height, is_hover)
+            if not ML:
+                game_map1 = Map(length)
+                player = Square(Vector(Map.graininess, (game_map1.blocks_height - 1) * Map.graininess - 1), game_map1)
+                gui = Gui(game_map1, player, screen, width, height, is_hover)
             break
 
         if button1.check_click():
@@ -97,7 +99,10 @@ if __name__ == '__main__':
     if third_stage_done and not ML:
         gui.run()
     elif third_stage_done and ML:
-        print("ML")
-        exit(0)
+        game_map1 = Map(50)
+        player = Square(Vector(Map.graininess, (game_map1.blocks_height - 1) * Map.graininess - 1), game_map1)
+        gui = Gui(game_map1, player, screen, width, height)
+        EA = EvolutionaryAlgorithm(game_map1, 50, 5)
+        gui.run(EA, EA.make_evolution_step())
     else:
         pass

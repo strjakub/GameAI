@@ -23,7 +23,7 @@ class Gui:
     black = pg.Color(0, 0, 0)
     red = pg.Color(255, 0, 0)
 
-    def __init__(self, game_map, game_player, screen, width, height, is_hover):
+    def __init__(self, game_map, game_player, screen, width, height, is_hover=False):
         pg.init()
         self.is_hover = is_hover
         self.map = game_map
@@ -52,8 +52,9 @@ class Gui:
 
         return blocks
 
-    def run(self):
+    def run(self, EA=None, move_list=None):
         clock = pg.time.Clock()
+        i = 0
         while True:
             self.frame += 1
             for event in pg.event.get():
@@ -61,13 +62,18 @@ class Gui:
                     pg.quit()
                     sys.exit()
 
-            keys = pg.key.get_pressed()
-            if keys[pg.K_SPACE]:
-                self.player.jump = True
-            if keys[pg.K_q] and self.is_hover:
-                self.player.hover_pressed = True
+            if not EA:
+                keys = pg.key.get_pressed()
+                if keys[pg.K_SPACE]:
+                    self.player.jump = True
+                if keys[pg.K_q] and self.is_hover:
+                    self.player.hover_pressed = True
+                else:
+                    self.player.hover_pressed = False
             else:
-                self.player.hover_pressed = False
+                if move_list[i] == 1:
+                    self.player.jump = True
+                i += 1
 
             if self.player.position.x // Map.graininess >= len(self.map.pattern[0]):
                 rect1 = pg.Rect((390, 180), (120, 80))
@@ -134,7 +140,10 @@ class Gui:
                     if keyboard.is_pressed("r"):
                         new_player = Square(Vector(Map.graininess, (self.map.blocks_height - 1) * Map.graininess - 1), self.map)
                         new_gui = Gui(self.map, new_player, self.screen, self.width, self.height, self.is_hover)
-                        new_gui.run()
+                        if move_list:
+                            new_gui.run(EA, EA.make_evolution_step())
+                        else:
+                            new_gui.run()
                         break
                     if keyboard.is_pressed("esc"):
                         break

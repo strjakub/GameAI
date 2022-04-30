@@ -11,12 +11,12 @@ class Creature:
 
     def create_path(self, path_len, path, generate, from_index, to_index):
         if not path:
-            self.path = random.choices(population=[0, 1], weights=[0.85, 0.15], k=path_len)
+            self.path = random.choices(population=[0, 1], weights=[0.95, 0.05], k=path_len)
         else:
             # generating left and right inclusive range [from_index, to_index]
             new_path = path.copy()
             if generate:
-                generated_path = random.choices(population=[0, 1], weights=[0.85, 0.15], k=to_index - from_index + 1)
+                generated_path = random.choices(population=[0, 1], weights=[0.95, 0.05], k=to_index - from_index + 1)
                 new_path[from_index: to_index + 1] = generated_path
             self.path = new_path
 

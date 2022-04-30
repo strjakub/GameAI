@@ -15,7 +15,8 @@ class Square:
         self.map = board
         self.velocity: Vector = Vector(12, 0)
         self.grid = self.map.to_grid()
-        self.block = pg.Rect(Map.graininess // 2, (self.map.blocks_height - 2) * Map.graininess // 2, Map.graininess // 2, Map.graininess // 2)
+        self.block = pg.Rect(Map.graininess // 2, (self.map.blocks_height - 2) * Map.graininess // 2,
+                             Map.graininess // 2, Map.graininess // 2)
         self.color = pg.Color(25, 100, 50)
         self.jump = False
         self.hover_pressed = False
@@ -63,9 +64,15 @@ class Square:
 
     def is_dead(self) -> int:
         z = Map.graininess - 1
+        if self.position.x >= len(self.grid[0]):
+            return len(self.grid[0])
+
         for i in range(Map.graininess):
-            if self.position.x + i < len(self.grid[0]) and self.grid[self.position.y][self.position.x + i] != 0 or \
-                    self.position.y - z >= 0 and self.grid[self.position.y - z + i][self.position.x] != 0 or \
+            if self.position.x + i >= len(self.grid[0]):
+                break
+            if self.grid[self.position.y][self.position.x + i] != 0 or \
+                    self.position.y - z >= 0 and self.position.y - z + i < len(self.grid) and \
+                    self.grid[self.position.y - z + i][self.position.x] != 0 or \
                     self.position.x + z < len(self.grid[self.position.y]) and self.grid[self.position.y - i][self.position.x + z] != 0 or \
                     self.position.y - z >= 0 and self.position.x + z < len(self.grid[self.position.y]) and \
                     self.grid[self.position.y - z][self.position.x + z - i] != 0:
@@ -75,7 +82,9 @@ class Square:
     def above(self):
         level = self.position.y
         cnt = 0
-        while level < len(self.grid) and self.grid[level][self.position.x] != 1 and self.position.x + Map.graininess - 1 < len(self.grid[0]) and self.grid[level][self.position.x + Map.graininess - 1] != 1:
+        while level < len(self.grid) and self.grid[level][
+            self.position.x] != 1 and self.position.x + Map.graininess - 1 < len(self.grid[0]) and self.grid[level][
+            self.position.x + Map.graininess - 1] != 1:
             level = level + 1
             cnt = cnt + 1
         return Vector(self.velocity.x, cnt - 1)

@@ -1,18 +1,22 @@
-from Button import Button
-from Map import Map
-from Square import Square
-from Vector import Vector
-from Gui import Gui
-from EvolutionaryAlgorithm import EvolutionaryAlgorithm
+from Gui.Button import Button
+from Map.Map import Map
+from Map.Square import Square
+from Map.Vector import Vector
+from Gui.Gui import Gui
+from AI.EvolutionaryAlgorithm import EvolutionaryAlgorithm
 import pygame as pg
 import sys
 
 
-if __name__ == '__main__':
+class UndefinedBehaviourException(Exception):
+    pass
+
+
+def main():
     first_stage_done = False
     second_stage_done = False
     third_stage_done = False
-    ML = False
+    ml = False
     is_hover = False
     length = 0
 
@@ -30,7 +34,7 @@ if __name__ == '__main__':
     text_surf = pg.font.Font(None, 60).render("Loading...", True, (0, 0, 0))
     text_rect = text_surf.get_rect(center=rect.center)
 
-    button1 = Button(screen, "Machine Learning", (75, 70), button_font, 300, 80)
+    button1 = Button(screen, "AI", (75, 70), button_font, 300, 80)
     button2 = Button(screen, "Casual Gameplay", (525, 70), button_font, 300, 80)
     button3 = Button(screen, "With Hover", (75, 185), button_font, 300, 80)
     button4 = Button(screen, "Non Hover", (525, 185), button_font, 300, 80)
@@ -60,7 +64,7 @@ if __name__ == '__main__':
         else:
             screen.blit(text_surf, text_rect)
             pg.display.update()
-            if not ML:
+            if not ml:
                 game_map1 = Map(length)
                 player = Square(Vector(Map.graininess, (game_map1.blocks_height - 1) * Map.graininess - 1), game_map1)
                 gui = Gui(game_map1, player, screen, width, height, is_hover)
@@ -70,7 +74,7 @@ if __name__ == '__main__':
             first_stage_done = True
             second_stage_done = True
             third_stage_done = True
-            ML = True
+            ml = True
         if button2.check_click():
             first_stage_done = True
 
@@ -96,13 +100,22 @@ if __name__ == '__main__':
         pg.display.update()
         clock.tick(60)
 
-    if third_stage_done and not ML:
-        gui.run()
-    elif third_stage_done and ML:
-        game_map1 = Map(50)
-        player = Square(Vector(Map.graininess, (game_map1.blocks_height - 1) * Map.graininess - 1), game_map1)
-        gui = Gui(game_map1, player, screen, width, height)
-        EA = EvolutionaryAlgorithm(game_map1, len(game_map1.pattern[0]), 5)
-        gui.run(EA, EA.make_evolution_step())
-    else:
-        pass
+    try:
+        if third_stage_done and not ml:
+            gui.run()
+        elif third_stage_done and ml:
+            game_map1 = Map(50)
+            player = Square(Vector(Map.graininess, (game_map1.blocks_height - 1) * Map.graininess - 1), game_map1)
+            gui = Gui(game_map1, player, screen, width, height)
+            ea = EvolutionaryAlgorithm(game_map1, len(game_map1.pattern[0]), 5)
+            gui.run(ea, ea.make_evolution_step())
+        else:
+            raise UndefinedBehaviourException()
+
+    except UndefinedBehaviourException:
+        print("Undefined behaviour has occurred while selecting game mode!")
+        exit(1)
+
+
+if __name__ == '__main__':
+    main()

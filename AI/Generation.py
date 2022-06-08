@@ -1,7 +1,7 @@
-from Creature import Creature
-from Map import Map
-from Vector import Vector
-from Square import Square
+from AI.Creature import Creature
+from Map.Map import Map
+from Map.Vector import Vector
+from Map.Square import Square
 from queue import PriorityQueue
 
 
@@ -37,13 +37,9 @@ class Generation:
                 self.best_creatures.get()
 
         self.creatures = []
-        print("QUEUE")
         while not self.best_creatures.empty():
             creature = self.best_creatures.get()
-            print(creature)
             self.creatures.append(creature)
-        print("Check:", self.creatures[0].path == self.creatures[1].path)
-        print("END QUEUE")
 
     # reproduce best_creatures
     def update_generation(self, prev_indexes_num, next_indexes_num):

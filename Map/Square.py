@@ -1,5 +1,5 @@
-from Vector import Vector
-from Map import Map
+from Map.Vector import Vector
+from Map.Map import Map
 import pygame as pg
 
 
@@ -82,9 +82,8 @@ class Square:
     def above(self):
         level = self.position.y
         cnt = 0
-        while level < len(self.grid) and self.grid[level][
-            self.position.x] != 1 and self.position.x + Map.graininess - 1 < len(self.grid[0]) and self.grid[level][
-            self.position.x + Map.graininess - 1] != 1:
+        while level < len(self.grid) and self.grid[level][self.position.x] != 1 and \
+                self.position.x + Map.graininess - 1 < len(self.grid[0]) and self.grid[level][self.position.x + Map.graininess - 1] != 1:
             level = level + 1
             cnt = cnt + 1
         return Vector(self.velocity.x, cnt - 1)

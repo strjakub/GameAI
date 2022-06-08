@@ -1,5 +1,6 @@
 import pygame as pg
 
+
 class Button:
     def __init__(self, screen, text, pos, font, width, height):
         self.pos = pos

@@ -1,7 +1,5 @@
 import pygame as pg
 
-# divide this class into subclasses probably
-
 
 class MapBlock:
 

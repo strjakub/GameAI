@@ -1,12 +1,9 @@
 from typing import Tuple
-
 import keyboard
-
-from Map import Map
-from MapBlock import MapBlock
-from Square import Square
-from Vector import Vector
-
+from Map.Map import Map
+from Map.MapBlock import MapBlock
+from Map.Square import Square
+from Map.Vector import Vector
 import pygame as pg
 import sys
 
@@ -52,7 +49,7 @@ class Gui:
 
         return blocks
 
-    def run(self, EA=None, move_list=None):
+    def run(self, ev_alg=None, move_list=None):
         clock = pg.time.Clock()
         i = 0
         while True:
@@ -62,7 +59,7 @@ class Gui:
                     pg.quit()
                     sys.exit()
 
-            if not EA:
+            if not ev_alg:
                 keys = pg.key.get_pressed()
                 if keys[pg.K_SPACE]:
                     self.player.jump = True
@@ -104,11 +101,14 @@ class Gui:
                     if blocks_len != len(self.blocks):
                         for y in range(self.map.blocks_height):
                             if self.map.pattern[y][self.iter] == 1:
-                                self.blocks.append(MapBlock(self.map.blocks_width, y, Gui.black, "block", Gui.block_width, Gui.block_height))
+                                self.blocks.append(MapBlock(self.map.blocks_width, y, Gui.black, "block",
+                                                            Gui.block_width, Gui.block_height))
                             elif self.map.pattern[y][self.iter] == 2:
-                                self.blocks.append(MapBlock(self.map.blocks_width, y, Gui.red, "spike", Gui.block_width, Gui.block_height))
+                                self.blocks.append(MapBlock(self.map.blocks_width, y, Gui.red, "spike",
+                                                            Gui.block_width, Gui.block_height))
                             elif self.map.pattern[y][self.iter] == 3:
-                                self.blocks.append(MapBlock(self.map.blocks_width, y, Gui.red, "reverse_spike", Gui.block_width, Gui.block_height))
+                                self.blocks.append(MapBlock(self.map.blocks_width, y, Gui.red, "reverse_spike",
+                                                            Gui.block_width, Gui.block_height))
 
                         self.iter += 1
                         if self.iter >= len(self.map.pattern[0]):
@@ -141,7 +141,7 @@ class Gui:
                         new_player = Square(Vector(Map.graininess, (self.map.blocks_height - 1) * Map.graininess - 1), self.map)
                         new_gui = Gui(self.map, new_player, self.screen, self.width, self.height, self.is_hover)
                         if move_list:
-                            new_gui.run(EA, EA.make_evolution_step())
+                            new_gui.run(ev_alg, ev_alg.make_evolution_step())
                         else:
                             new_gui.run()
                         break

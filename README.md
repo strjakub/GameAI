@@ -1,7 +1,7 @@
 ### GameAI
 
-### [Documentation Here](Documentation.pdf)
+# [Documentation Here](Documentation.pdf)
 
-## Contributors
-# - Cyprian Neugebauer
-# - Jakub Strojewski
+# Contributors
+ - Cyprian Neugebauer
+ - Jakub Strojewski
